@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EdsmScanner": {
+      "commandName": "Project",
+      "commandLineArgs": "Sol"
+    }
+  }
+}
