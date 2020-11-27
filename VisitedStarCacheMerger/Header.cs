@@ -5,7 +5,6 @@ namespace VisitedStarCacheMerger
 {
     class Header
     {
-        private const int StaticRows = 4;
         private readonly byte[] _bytes;
         public int Rows { get; private set; }
 
@@ -13,13 +12,13 @@ namespace VisitedStarCacheMerger
         private Header(byte[] bytes)
         {
             _bytes = bytes;
-            Rows = BitConverter.ToInt32(_bytes.AsSpan(24, 4)) - StaticRows;
+            Rows = BitConverter.ToInt32(_bytes.AsSpan(24, 4));
         }
 
         public void UpdateRows(int count)
         {
             Rows = count;
-            if (!BitConverter.TryWriteBytes(_bytes.AsSpan(24, 4), count + StaticRows))
+            if (!BitConverter.TryWriteBytes(_bytes.AsSpan(24, 4), count))
                 throw new InvalidOperationException();
         }
 

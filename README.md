@@ -50,4 +50,6 @@ The `VisitedStarsCache.dat` can be found in `c:\Users\[user_name]\AppData\Local\
 
 After the merge and restart of the game, the fully discovered systems will be displayed as visited star systems on the route planner.
 
+Please note that `VisitedStarsCache.dat` is limited to hold up to 3876 system entries. The `VisitedStarCacheMerger` works the way that most recently added systems will override older ones.
+
 *The merger application has been written based on [this blog post](https://forums.frontier.co.uk/threads/visited-stars-galaxy-map-visitedstarscache-dat-playing-on-multiple-pc.509263/#post-7750676)*

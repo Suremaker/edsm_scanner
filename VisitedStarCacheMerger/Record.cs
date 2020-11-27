@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace VisitedStarCacheMerger
 {
@@ -7,13 +6,13 @@ namespace VisitedStarCacheMerger
     {
         public long Id { get; set; }
         public int Visits { get; set; }
-        public int Reminder { get; set; }
+        public int VisitedDate { get; set; }
 
         public void Write(BinaryWriter output)
         {
             output.Write(Id);
             output.Write(Visits);
-            output.Write(Reminder);
+            output.Write(VisitedDate);
         }
 
         public static Record Read(BinaryReader input)
@@ -22,7 +21,7 @@ namespace VisitedStarCacheMerger
             {
                 Id = input.ReadInt64(),
                 Visits = input.ReadInt32(),
-                Reminder = input.ReadInt32()
+                VisitedDate = input.ReadInt32()
             };
         }
     }
