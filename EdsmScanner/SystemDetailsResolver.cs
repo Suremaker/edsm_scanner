@@ -7,6 +7,7 @@ namespace EdsmScanner
 {
     internal class SystemDetailsResolver
     {
+        private readonly SemaphoreSlim _throttler = new SemaphoreSlim(20);
         private readonly EdsmClient _client;
         private readonly SystemRef[] _systems;
         private int _totals;
@@ -18,6 +19,7 @@ namespace EdsmScanner
 
         private async Task<SystemDetails> GetDetails(SystemRef sys)
         {
+            await _throttler.WaitAsync();
             try
             {
                 return await _client.GetDetails(sys);
@@ -25,6 +27,7 @@ namespace EdsmScanner
             finally
             {
                 Console.Write($"\r{Interlocked.Increment(ref _totals)}");
+                _throttler.Release();
             }
         }
 
@@ -32,9 +35,14 @@ namespace EdsmScanner
         {
             _totals = 0;
             Console.WriteLine("Getting systems details...");
-            var systemDetails = await Task.WhenAll(_systems.Select(GetDetails));
-            Console.WriteLine();
-            return systemDetails;
+            try
+            {
+                return await Task.WhenAll(_systems.Select(GetDetails));
+            }
+            finally
+            {
+                Console.WriteLine();
+            }
         }
     }
 }

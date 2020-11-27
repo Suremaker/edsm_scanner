@@ -21,24 +21,28 @@ namespace EdsmScanner
                 .AddHttpClient("edsm", x => x.BaseAddress = new Uri("https://www.edsm.net/"))
                 .AddPolicyHandler(HttpPolicyExtensions.HandleTransientHttpError()
                     .OrResult(r => r.StatusCode == HttpStatusCode.TooManyRequests)
-                    .WaitAndRetryAsync(15, _ => TimeSpan.FromSeconds(1)))
-                .AddPolicyHandler(Policy.BulkheadAsync<HttpResponseMessage>(20, int.MaxValue));
+                    .WaitAndRetryAsync(15, _ => TimeSpan.FromSeconds(1)));
             _provider = collection.BuildServiceProvider();
-            _client = _provider.GetService<IHttpClientFactory>().CreateClient("edsm");
+            _client = _provider.GetRequiredService<IHttpClientFactory>().CreateClient("edsm");
         }
 
         public void Dispose()
         {
-            _provider?.Dispose();
+            _provider.Dispose();
         }
 
         public async Task<SystemDetails> GetDetails(SystemRef sys)
         {
-            var details = await _client.GetFromJsonAsync<SystemDetails>($"api-system-v1/bodies?systemName={Uri.EscapeDataString(sys.Name)}");
+            var details = await _client.GetFromJsonAsync<SystemDetails>($"api-system-v1/bodies?systemName={Uri.EscapeDataString(sys.Name)}")
+                          ?? throw new InvalidOperationException($"Unable to get details for {sys}");
             details.Ref = sys;
             return details;
         }
 
-        public async Task<SystemRef[]> SearchSystems(string originSystem, int radius) => await _client.GetFromJsonAsync<SystemRef[]>($"api-v1/sphere-systems?systemName={Uri.EscapeDataString(originSystem)}&radius={radius}");
+        public async Task<SystemRef[]> SearchSystems(string originSystem, int radius)
+        {
+            return await _client.GetFromJsonAsync<SystemRef[]>($"api-v1/sphere-systems?systemName={Uri.EscapeDataString(originSystem)}&radius={radius}")
+                   ?? throw new InvalidOperationException("Unable to fetch systems");
+        }
     }
 }

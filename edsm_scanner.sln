@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdsmScanner", "EdsmScanner\EdsmScanner.csproj", "{1C6D87BC-C32A-4F13-857A-DCC202A60CE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisitedStarCacheMerger", "VisitedStarCacheMerger\VisitedStarCacheMerger.csproj", "{E5F1B46F-6487-4D00-A035-26BBB86E9297}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{1C6D87BC-C32A-4F13-857A-DCC202A60CE0}.Release|x64.Build.0 = Release|Any CPU
 		{1C6D87BC-C32A-4F13-857A-DCC202A60CE0}.Release|x86.ActiveCfg = Release|Any CPU
 		{1C6D87BC-C32A-4F13-857A-DCC202A60CE0}.Release|x86.Build.0 = Release|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Debug|x64.Build.0 = Debug|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Debug|x86.Build.0 = Debug|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Release|x64.ActiveCfg = Release|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Release|x64.Build.0 = Release|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Release|x86.ActiveCfg = Release|Any CPU
+		{E5F1B46F-6487-4D00-A035-26BBB86E9297}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

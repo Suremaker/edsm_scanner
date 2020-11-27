@@ -4,7 +4,7 @@
     {
         public decimal Distance { get; set; }
         public int? BodyCount { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public override string ToString() => $"{Name} [{Distance}ly] ({BodyCount?.ToString() ?? "?"} bodies)";
     }
 }

@@ -28,7 +28,7 @@ namespace EdsmScanner
         private static async Task<SystemRef[]> SearchSystems(EdsmClient client, string originSystem, int radius)
         {
             Console.WriteLine($"Searching for systems in {radius}ly distance from: {originSystem}");
-            var systems = await client.SearchSystems(originSystem, radius) ?? Array.Empty<SystemRef>();
+            var systems = await client.SearchSystems(originSystem, radius);
 
             Console.WriteLine($"Found systems: {systems.Length}");
             return systems;
@@ -39,7 +39,7 @@ namespace EdsmScanner
             await using var discoveredWriter = new StreamWriter($"discovered_{originSystem}.txt");
             await using var partialWriter = new StreamWriter($"partial_{originSystem}.txt");
 
-            foreach (var sys in systemDetails.OrderBy(d => d.Ref.Distance))
+            foreach (var sys in systemDetails.OrderBy(d => d.Ref?.Distance))
             {
                 if (sys.IsNotFullyDiscovered)
                     await partialWriter.WriteLineAsync($"{sys.Ref} ({sys.Bodies?.Length.ToString() ?? "?"} discovered) => {sys.Url}");
