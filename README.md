@@ -10,7 +10,7 @@ To obtain the tools, please navigate to [Releases](https://github.com/Suremaker/
 
 ## EdsmScanner
 
-The EdsmScanner.exe allows to scan for the nearby systems around specified system name using [https://www.edsm.net/api-v1/sphere-systems](GET https://www.edsm.net/en/api-v1) and [GET https://www.edsm.net/api-system-v1/bodies](https://www.edsm.net/en/api-system-v1) EDSM API calls.
+The EdsmScanner.exe allows to scan for the nearby systems around specified system name using [GET https://www.edsm.net/api-v1/sphere-systems](https://www.edsm.net/en/api-v1) and [GET https://www.edsm.net/api-system-v1/bodies](https://www.edsm.net/en/api-system-v1) EDSM API calls.
 
 Example usage: `> EdsmScanner.exe "Synuefe JM-G b57-1"`
 
