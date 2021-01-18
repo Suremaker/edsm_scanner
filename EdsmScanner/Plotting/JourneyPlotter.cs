@@ -21,10 +21,14 @@ namespace EdsmScanner.Plotting
         public SystemDetails[] Plot()
         {
             Console.WriteLine($"Plotting journey for {_systems.Length} systems...");
+
+            if (_systems.Length < 3)
+                return _systems.Select(s => s.Details).ToArray();
+
             _buckets = CreateBuckets();
             InitializeDistances();
             PlotJourney();
-            
+
             var journey = MaterializeJourney(_systems.OrderBy(s => s.Details.Ref.Distance).First()).ToArray();
 
             if (journey.Length < _systems.Length)

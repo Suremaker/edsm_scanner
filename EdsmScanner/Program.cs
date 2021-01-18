@@ -44,7 +44,7 @@ namespace EdsmScanner
 
         private static async Task WriteDiscoveredOutput(string originSystem, SystemDetails[] discovered)
         {
-            var path = $"discovered_{originSystem}.txt";
+            var path = SanitizePath($"discovered_{originSystem}.txt");
             await using var discoveredWriter = new StreamWriter(path);
             int lines = 0;
             foreach (var sys in discovered)
@@ -61,7 +61,7 @@ namespace EdsmScanner
 
         private static async Task WritePartialOutput(string originSystem, SystemDetails[] partiallyDiscoveredSystems, bool journeyPlotted)
         {
-            var path = $"partial_{originSystem}.txt";
+            var path = SanitizePath($"partial_{originSystem}.txt");
             await using var partialWriter = new StreamWriter(path);
 
             await partialWriter.WriteLineAsync(journeyPlotted ? $"# distances calculated to previous system, starting from: {originSystem}" : $"# distances calculated to origin system: {originSystem}");
@@ -73,6 +73,12 @@ namespace EdsmScanner
             }
 
             Console.WriteLine($"Generated {path} with {partiallyDiscoveredSystems.Length} systems.");
+        }
+
+        private static string SanitizePath(string fileName)
+        {
+            var invalids = Path.GetInvalidFileNameChars();
+            return string.Join("_", fileName.Split(invalids, StringSplitOptions.RemoveEmptyEntries)).TrimEnd('.');
         }
 
         private static async Task<SystemRef[]> SearchSystems(EdsmClient client, string originSystem, int radius)
@@ -91,7 +97,7 @@ namespace EdsmScanner
 
         private static bool ShallPlotJourney(string[] args)
         {
-            var enabled = new[] { "y", "1", "t", "true" };
+            var enabled = new[] { "y", "yes", "1", "t", "true" };
             return args.Length > 2 && enabled.Contains(args[2], StringComparer.OrdinalIgnoreCase);
         }
     }
