@@ -29,8 +29,10 @@ The system is qualified as fully discovered if total bodies count is greater tha
 ### Working with partially discovered systems
 The `partial_[system name].txt` file contains lines like:
 ```
-Synuefe KM-G b57-3 [8.26ly] (30 bodies) (21 discovered) => https://www.edsm.net/en/system/bodies/id/235051/name/Synuefe+KM-G+b57-3
-Synuefe MH-G b57-1 [8.45ly] (? bodies) (0 discovered) => https://www.edsm.net/en/system/bodies/id/20950446/name/Synuefe+MH-G+b57-1
+# distances calculated to origin system: Synuefe JM-G b57-1
+Synuefe KM-G b57-3 [8.26ly] (30 bodies / 21 discovered) => https://www.edsm.net/en/system/bodies/id/235051/name/Synuefe+KM-G+b57-3
+Synuefe MH-G b57-1 [8.45ly] (? bodies / 0 discovered) => https://www.edsm.net/en/system/bodies/id/20950446/name/Synuefe+MH-G+b57-1
+Synuefe IA-C d14-75 [12.02ly] (? bodies / 1 discovered) => https://www.edsm.net/en/system/bodies/id/14713801/name/Synuefe+IA-C+d14-75
 ```
 ... where each line contains the:
 * system name, 
@@ -39,6 +41,20 @@ Synuefe MH-G b57-1 [8.45ly] (? bodies) (0 discovered) => https://www.edsm.net/en
 * list of discovered bodies so far
 * url to system description in edsm.net
 
+## Journey plotting
+
+The EdsmScanner.exe allows to plot the journey through the partially discovered systems to make it easier to navigate through them.
+
+To use the journey plotting, the tool has to be run with three parameters, where the last one has to be `yes`, `y`, `true`, `t` or `1` to activate the feature: `> EdsmScanner.exe "Synuefe JM-G b57-1" 100 TRUE`.
+
+When executed, the `partial_[system name].txt` file will contain the systems in order allowing easier travelsal between them and distance parameter referring to the previous system. The header of the file will contain that information:
+
+```
+# distances calculated to previous system, starting from: Synuefe JM-G b57-1
+Synuefe KM-G b57-3 [8.26ly] (30 bodies / 21 discovered) => https://www.edsm.net/en/system/bodies/id/235051/name/Synuefe+KM-G+b57-3
+Synuefe MH-G b57-1 [4.53ly] (? bodies / 0 discovered) => https://www.edsm.net/en/system/bodies/id/20950446/name/Synuefe+MH-G+b57-1
+Synuefe MH-G b57-0 [5.16ly] (8 bodies / 1 discovered) => https://www.edsm.net/en/system/bodies/id/235049/name/Synuefe+MH-G+b57-0
+```
 
 ## VisitedStarCacheMerger
 
