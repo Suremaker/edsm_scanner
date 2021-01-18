@@ -47,7 +47,7 @@ The EdsmScanner.exe allows to plot the journey through the partially discovered 
 
 To use the journey plotting, the tool has to be run with three parameters, where the last one has to be `yes`, `y`, `true`, `t` or `1` to activate the feature: `> EdsmScanner.exe "Synuefe JM-G b57-1" 100 TRUE`.
 
-When executed, the `partial_[system name].txt` file will contain the systems in order allowing easier travelsal between them and distance parameter referring to the previous system. The header of the file will contain that information:
+When executed, the `partial_[system name].txt` file will contain the systems in order allowing easier traversal between them and distance parameter referring to the previous system. The header of the file will contain that information:
 
 ```
 # distances calculated to previous system, starting from: Synuefe JM-G b57-1
