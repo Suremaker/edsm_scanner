@@ -18,32 +18,46 @@ namespace EdsmScanner.Plotting
             _bucketSize = 30;
         }
 
-        public IEnumerable<SystemDetails> Plot()
+        public SystemDetails[] Plot()
         {
             Console.WriteLine($"Plotting journey for {_systems.Length} systems...");
             _buckets = CreateBuckets();
             InitializeDistances();
             PlotJourney();
-            var jumps = MaterializeJumps(_systems.OrderBy(s => s.Details.Ref.Distance).First());
             
-            if (jumps.Length < _systems.Length)
-            {
-                Console.Error.WriteLine($"Something went wrong in plotting - generated journey for {jumps.Length} systems out of {_systems.Length}");
-                File.WriteAllText("error.txt",string.Join("\n",_systems.Select(s=>s.ToString())));
-            }
-            return jumps;
+            var journey = MaterializeJourney(_systems.OrderBy(s => s.Details.Ref.Distance).First()).ToArray();
+
+            if (journey.Length < _systems.Length)
+                ReportError(journey);
+            return journey;
         }
 
-        private SystemDetails[] MaterializeJumps(JourneySystem start)
+        private void ReportError(SystemDetails[] jumps)
         {
-            return Enumerable.Repeat(start.Details, 1).Concat(start.Traverse().Select(x => x.Details)).ToArray();
+            Console.Error.WriteLine(
+                $"Something went wrong in plotting - generated journey for {jumps.Length} systems out of {_systems.Length}");
+            File.WriteAllText("error.txt", string.Join("\n", _systems.Select(s => s.ToString())));
+        }
+
+        private IEnumerable<SystemDetails> MaterializeJourney(JourneySystem start)
+        {
+            var last = start.Details;
+            last.PlottedDistance = last.Ref.Distance;
+            yield return last;
+            foreach (var journeySystem in start.Traverse().SkipLast(1))
+            {
+                var current = journeySystem.Details;
+                current.PlottedDistance = (decimal)current.Ref.Coords.Distance(last.Ref.Coords);
+                yield return current;
+                last = current;
+            }
         }
 
         private void PlotJourney()
         {
             Console.WriteLine("  Plotting journeys ...");
             SystemDistance? distance;
-            while ((distance = GetShortestDistance()) != null) 
+            while ((distance = GetShortestDistance()) != null)
                 EstablishConnection(distance);
 
             if (journeyJumps < _systems.Length)
@@ -51,7 +65,7 @@ namespace EdsmScanner.Plotting
                 Console.WriteLine("  Calculating distances for final bucket ...");
                 var finalBucket = new SystemBucket(_systems.Where(s => s.Connections.Count < 2));
                 finalBucket.InitializeDistances();
-                _buckets = new List<SystemBucket> {finalBucket};
+                _buckets = new List<SystemBucket> { finalBucket };
             }
 
             while ((distance = GetShortestDistance()) != null)

@@ -6,6 +6,6 @@
         public int? BodyCount { get; set; }
         public string Name { get; set; } = string.Empty;
         public CoordF Coords { get; set; }
-        public override string ToString() => $"{Name} ({BodyCount?.ToString() ?? "?"} bodies)";
+        public override string ToString() => $"{Name} [{Distance}ly] ({BodyCount?.ToString() ?? "?"} bodies)";
     }
 }

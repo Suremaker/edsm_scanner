@@ -12,5 +12,7 @@ namespace EdsmScanner
         public bool IsNotFullyDiscovered => BodyCount == null || BodyCount > (Bodies?.Length ?? 0);
         public SystemRef? Ref { get; set; }
         public override string ToString() => $"{Ref}";
+
+        public decimal PlottedDistance { get; set; }
     }
 }
