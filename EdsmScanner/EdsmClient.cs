@@ -21,7 +21,7 @@ namespace EdsmScanner
                 .AddHttpClient("edsm", x => x.BaseAddress = new Uri("https://www.edsm.net/"))
                 .AddPolicyHandler(HttpPolicyExtensions.HandleTransientHttpError()
                     .OrResult(r => r.StatusCode == HttpStatusCode.TooManyRequests)
-                    .WaitAndRetryAsync(15, _ => TimeSpan.FromSeconds(1)));
+                    .WaitAndRetryAsync(45, _ => TimeSpan.FromSeconds(3)));
             _provider = collection.BuildServiceProvider();
             _client = _provider.GetRequiredService<IHttpClientFactory>().CreateClient("edsm");
         }
@@ -41,7 +41,7 @@ namespace EdsmScanner
 
         public async Task<SystemRef[]> SearchSystems(string originSystem, int radius)
         {
-            return await _client.GetFromJsonAsync<SystemRef[]>($"api-v1/sphere-systems?systemName={Uri.EscapeDataString(originSystem)}&radius={radius}")
+            return await _client.GetFromJsonAsync<SystemRef[]>($"api-v1/sphere-systems?systemName={Uri.EscapeDataString(originSystem)}&radius={radius}&showCoordinates=1")
                    ?? throw new InvalidOperationException("Unable to fetch systems");
         }
     }
