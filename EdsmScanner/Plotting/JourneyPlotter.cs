@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using EdsmScanner.Models;
 
 namespace EdsmScanner.Plotting
 {
@@ -39,7 +40,7 @@ namespace EdsmScanner.Plotting
         private void ReportError(SystemDetails[] jumps)
         {
             Console.Error.WriteLine(
-                $"Something went wrong in plotting - generated journey for {jumps.Length} systems out of {_systems.Length}");
+                $"  Something went wrong in plotting - generated journey for {jumps.Length} systems out of {_systems.Length}");
             File.WriteAllText("error.txt", string.Join("\n", _systems.Select(s => s.ToString())));
         }
 

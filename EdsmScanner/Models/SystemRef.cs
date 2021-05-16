@@ -1,4 +1,4 @@
-﻿namespace EdsmScanner
+﻿namespace EdsmScanner.Models
 {
     internal class SystemRef
     {

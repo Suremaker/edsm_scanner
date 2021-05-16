@@ -3,11 +3,13 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using EdsmScanner.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
 
-namespace EdsmScanner
+namespace EdsmScanner.Clients
 {
     class EdsmClient : IDisposable
     {
@@ -18,6 +20,7 @@ namespace EdsmScanner
         {
             var collection = new ServiceCollection();
             collection
+                .AddLogging(x => x.AddDebug())
                 .AddHttpClient("edsm", x => x.BaseAddress = new Uri("https://www.edsm.net/"))
                 .AddPolicyHandler(HttpPolicyExtensions.HandleTransientHttpError()
                     .OrResult(r => r.StatusCode == HttpStatusCode.TooManyRequests)
