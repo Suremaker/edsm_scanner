@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using EdsmScanner.Clients;
+using EdsmScanner.Models;
 
-namespace EdsmScanner
+namespace EdsmScanner.Search
 {
     internal class SystemDetailsResolver
     {

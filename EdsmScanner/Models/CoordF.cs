@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace EdsmScanner
+namespace EdsmScanner.Models
 {
     internal struct CoordF
     {

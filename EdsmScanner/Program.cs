@@ -2,7 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using EdsmScanner.Clients;
+using EdsmScanner.Models;
 using EdsmScanner.Plotting;
+using EdsmScanner.Search;
 
 namespace EdsmScanner
 {

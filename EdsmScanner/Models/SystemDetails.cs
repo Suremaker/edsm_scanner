@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EdsmScanner
+namespace EdsmScanner.Models
 {
     internal class SystemDetails
     {
