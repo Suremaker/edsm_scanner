@@ -1,4 +1,6 @@
 ﻿using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Linq;
 using System.Threading.Tasks;
 using EdsmScanner.Clients;
@@ -10,22 +12,24 @@ namespace EdsmScanner
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
-            if (args.Length == 0)
+            var cmd = new RootCommand
             {
-                Console.WriteLine("EdsmScanner.exe [origin-system-name] [scan-radius] [plot-journey]");
-                Console.WriteLine("scan-radius is optional and set to 50");
-                Console.WriteLine("plot-journey is optional and set to N");
-                return;
-            }
+                new Option<int>(new []{"--scan-radius","-r"},50,"Scan radius in ly (default: 50)"),
+                new Option<bool>(new []{"--plot-journey","-p"},false,"Plot journey (default: false)"),
+                new Option<TimeSpan>(new []{"--cache-duration"},TimeSpan.FromMinutes(30),"Duration on how long system details are cached (default: 00:30:00)"),
+            };
+            cmd.Description = "Edsm Scanner";
+            cmd.AddArgument(new Argument<string>("origin-system"){Description = "Origin system name"});
+            cmd.Handler = CommandHandler.Create<string, int, bool, TimeSpan>(Main);
+            return await cmd.InvokeAsync(args);
+        }
 
-            var originSystem = args[0];
-            var radius = ParseRadius(args);
-            var plotJourney = ShallPlotJourney(args);
-
-            using var client = new EdsmClient();
-            var foundSystems = await new SystemResolver(client).ResolveSystemsAround(originSystem, radius);
+        static async Task Main(string originSystem, int scanRadius, bool plotJourney, TimeSpan cacheDuration)
+        {
+            using var client = new EdsmClient(new SystemCache(cacheDuration));
+            var foundSystems = await new SystemResolver(client).ResolveSystemsAround(originSystem, scanRadius);
 
             var filteredSystems = new SystemFilter().FindPartiallyDiscovered(foundSystems);
 
@@ -34,17 +38,6 @@ namespace EdsmScanner
 
             var orderedPartialSystems = new SystemOrderer(filteredSystems, plotJourney).Order();
             await new SystemListWriter().WriteSystemList(originSystem, orderedPartialSystems, plotJourney);
-        }
-
-        private static int ParseRadius(string[] args)
-        {
-            return args.Length > 1 && int.TryParse(args[1], out var r) ? r : 50;
-        }
-
-        private static bool ShallPlotJourney(string[] args)
-        {
-            var enabled = new[] { "y", "yes", "1", "t", "true" };
-            return args.Length > 2 && enabled.Contains(args[2], StringComparer.OrdinalIgnoreCase);
         }
     }
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "EdsmScanner": {
       "commandName": "Project",
-      "commandLineArgs": "Sol"
+      "commandLineArgs": "\"V970 Scorpii\" -r 30 -p"
     }
   }
 }
