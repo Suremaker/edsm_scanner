@@ -13,7 +13,7 @@ namespace EdsmScanner.Models
         [Queryable]
         public int DiscoveredBodies => Bodies?.Length ?? 0;
         [Queryable]
-        public bool IsFullyDiscovered => BodyCount != null && BodyCount <= DiscoveredBodies;
+        public bool IsFullyDiscovered => BodyCount.GetValueOrDefault() > 0 && BodyCount <= DiscoveredBodies;
 
         /// <summary>
         /// Expected count

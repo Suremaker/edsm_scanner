@@ -33,7 +33,7 @@ namespace EdsmScanner.Writers
 
         private static async Task WriteSystem(StreamWriter writer, SystemDetails sys, decimal distance)
         {
-            await writer.WriteLineAsync($"{sys.Ref.Name} [{distance:F2}ly] ({sys.Ref.BodyCount?.ToString() ?? "?"} bodies / {sys.DiscoveredBodies} discovered / {sys.DiscoveredStars} stars discovered) => {sys.Url}");
+            await writer.WriteLineAsync($"{sys.Ref.Name} [{distance:F2}ly] ({sys.Ref.BodyCount?.ToString() ?? "?"} bodies / {sys.DiscoveredBodies} discovered, of which {sys.DiscoveredStars} stars) => {sys.Url}");
         }
 
         private static async Task WriteBody(StreamWriter writer, SystemBody body)
