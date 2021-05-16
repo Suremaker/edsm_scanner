@@ -9,10 +9,11 @@ namespace EdsmScanner.Clients
     internal class SystemCache
     {
         private readonly string _path = Path.Combine(AppContext.BaseDirectory, "_system-cache");
-        private readonly TimeSpan _expirationWindow = TimeSpan.FromMinutes(30);
+        private readonly TimeSpan _expirationWindow;
 
-        public SystemCache()
+        public SystemCache(TimeSpan expirationWindow)
         {
+            _expirationWindow = expirationWindow;
             Directory.CreateDirectory(_path);
         }
 
