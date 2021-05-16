@@ -24,7 +24,7 @@ namespace EdsmScanner
             var radius = ParseRadius(args);
             var plotJourney = ShallPlotJourney(args);
 
-            using var client = new EdsmClient();
+            using var client = new EdsmClient(new SystemCache());
             var foundSystems = await new SystemResolver(client).ResolveSystemsAround(originSystem, radius);
 
             var filteredSystems = new SystemFilter().FindPartiallyDiscovered(foundSystems);
