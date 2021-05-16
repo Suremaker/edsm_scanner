@@ -21,7 +21,7 @@ namespace EdsmScanner.Writers
                 await WriteSystem(writer, sys, distance);
                 if (includeBodies)
                 {
-                    foreach (var body in sys.Bodies.OrderBy(b => b.DistanceToArrival))
+                    foreach (var body in sys.FilteredBodies.OrderBy(b => b.DistanceToArrival))
                     {
                         await WriteBody(writer, body);
                     }
