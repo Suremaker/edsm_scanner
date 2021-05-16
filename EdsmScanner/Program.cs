@@ -26,8 +26,8 @@ namespace EdsmScanner
                 new Option<bool>(new []{"--plot-journey","-p"},false,"Plot journey (default: false)"),
                 new Option<bool>(new []{"--include-bodies","-b"},false,"Include bodies in systems.txt (default: false)"),
                 new Option<TimeSpan>(new []{"--cache-duration"},TimeSpan.FromMinutes(30),"Duration on how long system details are cached (default: 00:30:00)"),
-                new Option<string[]>(new []{"--filter-body","-fb"},Array.Empty<string>,"Body filter(s) written in form on LINQ expression like: IsScoopable==true. When applied, only the systems with at least one matching body will be returned."),
-                new Option<string[]>(new []{"--filter-system","-fs"},Array.Empty<string>,"System filter(s) written in form on LINQ expression like: StarCount > 1.")
+                new Option<string[]>(new []{"--filter-body","-fb"},Array.Empty<string>,$"Body filter(s) written in form on LINQ expression like: \"{nameof(SystemBody.IsScoopable)}==true\". When applied, only the systems with at least one matching body will be returned."),
+                new Option<string[]>(new []{"--filter-system","-fs"},Array.Empty<string>,$"System filter(s) written in form on LINQ expression like: \"{nameof(SystemDetails.DiscoveredStars)} > 1\".")
             };
             cmd.Description = "Edsm Scanner";
             cmd.AddArgument(new Argument<string>("origin-system") { Description = "Origin system name" });
