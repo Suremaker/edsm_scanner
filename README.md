@@ -14,7 +14,7 @@ The EdsmScanner.exe allows to scan for the nearby systems around specified syste
 
 Example usage: `> EdsmScanner.exe "Synuefe JM-G b57-1"`
 
-The tool will search for systems around `Synuefe JM-G b57-1` in radius of 50ly (the radius can be specified as second parameter, up to 100).
+The tool will search for systems around `Synuefe JM-G b57-1` in radius of 50ly (the radius can be specified with `--scan-radius` option, up to 100).
 
 The outcome of the command will be 2 files:
 * `systems_Synuefe JM-G b57-1.txt` - file containing a list of partially discovered systems (reported in EDSM).
@@ -45,7 +45,7 @@ Synuefe IA-C d14-75 [12.02ly] (? bodies / 1 discovered) => https://www.edsm.net/
 
 The EdsmScanner.exe allows to plot the journey through the partially discovered systems to make it easier to navigate through them.
 
-To use the journey plotting, the tool has to be run with three parameters, where the last one has to be `yes`, `y`, `true`, `t` or `1` to activate the feature: `> EdsmScanner.exe "Synuefe JM-G b57-1" 100 TRUE`.
+To use the journey plotting, the tool has to be run with `--plot-journey` option: `> EdsmScanner.exe "Synuefe JM-G b57-1" --plot-journey`.
 
 When executed, the `systems_[system name].txt` file will contain the systems in order allowing easier traversal between them and distance parameter referring to the previous system. The header of the file will contain that information:
 

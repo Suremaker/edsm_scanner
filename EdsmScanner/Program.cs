@@ -16,12 +16,12 @@ namespace EdsmScanner
         {
             var cmd = new RootCommand
             {
-                new Option<string>(new []{"--origin-system","-o"},"Origin system name"){Required = true},
-                new Option<int>(new []{"--scan-radius","-r"},50,"Scan radius in LY (default: 50)"),
+                new Option<int>(new []{"--scan-radius","-r"},50,"Scan radius in ly (default: 50)"),
                 new Option<bool>(new []{"--plot-journey","-p"},false,"Plot journey (default: false)"),
                 new Option<TimeSpan>(new []{"--cache-duration"},TimeSpan.FromMinutes(30),"Duration on how long system details are cached (default: 00:30:00)"),
             };
             cmd.Description = "Edsm Scanner";
+            cmd.AddArgument(new Argument<string>("origin-system"){Description = "Origin system name"});
             cmd.Handler = CommandHandler.Create<string, int, bool, TimeSpan>(Main);
             return await cmd.InvokeAsync(args);
         }
