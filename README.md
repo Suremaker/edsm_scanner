@@ -12,12 +12,12 @@ To obtain the tools, please navigate to [Releases](https://github.com/Suremaker/
 
 The EdsmScanner.exe allows to scan for the nearby systems around specified system name using [GET https://www.edsm.net/api-v1/sphere-systems](https://www.edsm.net/en/api-v1) and [GET https://www.edsm.net/api-system-v1/bodies](https://www.edsm.net/en/api-system-v1) EDSM API calls.
 
-Example usage: `> EdsmScanner.exe "Synuefe JM-G b57-1"`
+Example usage: `> EdsmScanner.exe "Synuefe JM-G b57-1" -fs "IsFullyDiscovered==false"`
 
 The tool will search for systems around `Synuefe JM-G b57-1` in radius of 50ly (the radius can be specified with `--scan-radius` option, up to 100).
 
 The outcome of the command will be 2 files:
-* `systems_Synuefe JM-G b57-1.txt` - file containing a list of partially discovered systems (reported in EDSM).
+* `systems_Synuefe JM-G b57-1.txt` - file containing a list of all systems reported in EDSM which are not fully discovered.
 * `visited_Synuefe JM-G b57-1.txt` - file containg a list of id64 identifiers of the fully discovered systems - see VisitedStarCacheMerger description for more details.
 
 The system is qualified as partially discovered, if:
@@ -55,6 +55,20 @@ Synuefe KM-G b57-3 [8.26ly] (30 bodies / 21 discovered) => https://www.edsm.net/
 Synuefe MH-G b57-1 [4.53ly] (? bodies / 0 discovered) => https://www.edsm.net/en/system/bodies/id/20950446/name/Synuefe+MH-G+b57-1
 Synuefe MH-G b57-0 [5.16ly] (8 bodies / 1 discovered) => https://www.edsm.net/en/system/bodies/id/235049/name/Synuefe+MH-G+b57-0
 ```
+
+## Including bodies
+
+The EdsmScanner.exe allows to include the bodies in the search results too with option `--include-bodies`: `> EdsmScanner.exe "Synuefe JM-G b57-1" --include-bodies`
+
+When executed, the `systems_[system name].txt` file will contain the systems list with all matching bodies and their attributes.
+
+## Filtering
+
+It is possible now to filter the results by applying the `--filter-system` and `--filter-body` options.
+
+For example usages, please run: `> EdsmScanner.exe help usages`.
+
+For details on attributes that can be used during filtering, please run: `> EdsmScanner.exe help filters`.
 
 ## VisitedStarCacheMerger
 
