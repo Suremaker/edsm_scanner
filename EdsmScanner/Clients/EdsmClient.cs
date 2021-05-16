@@ -40,9 +40,16 @@ namespace EdsmScanner.Clients
 
         public async Task<SystemDetails> GetDetails(SystemRef sys)
         {
-            var details = await QueryWithCache(sys.Name) ?? throw new InvalidOperationException($"Unable to get details for {sys}");
-            details.Ref = sys;
-            return details;
+            try
+            {
+                var details = (await QueryWithCache(sys.Name))!;
+                details.Ref = sys;
+                return details;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Unable to get details for: {sys}", ex);
+            }
         }
 
         private async Task<SystemDetails?> QueryWithCache(string systemName)
@@ -56,8 +63,14 @@ namespace EdsmScanner.Clients
 
         public async Task<SystemRef[]> SearchSystems(string originSystem, int radius)
         {
-            return await _client.GetFromJsonAsync<SystemRef[]>($"api-v1/sphere-systems?systemName={Uri.EscapeDataString(originSystem)}&radius={radius}&showCoordinates=1")
-                   ?? throw new InvalidOperationException("Unable to fetch systems");
+            try
+            {
+                return (await _client.GetFromJsonAsync<SystemRef[]>($"api-v1/sphere-systems?systemName={Uri.EscapeDataString(originSystem)}&radius={radius}&showCoordinates=1"))!;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Unable to fetch systems for: {originSystem}", ex);
+            }
         }
     }
 }

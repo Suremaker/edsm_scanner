@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace EdsmScanner.Models
 {
@@ -6,6 +7,7 @@ namespace EdsmScanner.Models
     {
         public long? Id64 { get; set; }
         public int? BodyCount { get; set; }
+        public int StarCount => Bodies.Count(b => b.Type.Equals("star", StringComparison.OrdinalIgnoreCase));
         public SystemBody[] Bodies { get; set; } = Array.Empty<SystemBody>();
         public string Url { get; set; } = string.Empty;
 
