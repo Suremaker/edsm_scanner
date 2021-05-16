@@ -26,8 +26,7 @@ namespace EdsmScanner
             var plotJourney = ShallPlotJourney(args);
 
             using var client = new EdsmClient();
-            var systems = await SearchSystems(client, originSystem, radius);
-            var systemDetails = await new SystemDetailsResolver(client, systems).GetSystemDetails();
+            var systemDetails = await new SystemResolver(client).ResolveSystemsAround(originSystem, radius);
 
             var discovered = systemDetails.Where(x => !x.IsNotFullyDiscovered).ToArray();
             await WriteDiscoveredOutput(originSystem, discovered);
