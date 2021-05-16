@@ -17,8 +17,8 @@ Example usage: `> EdsmScanner.exe "Synuefe JM-G b57-1"`
 The tool will search for systems around `Synuefe JM-G b57-1` in radius of 50ly (the radius can be specified as second parameter, up to 100).
 
 The outcome of the command will be 2 files:
-* `partial_Synuefe JM-G b57-1.txt` - file containing a list of partially discovered systems (reported in EDSM).
-* `discovered_Synuefe JM-G b57-1.txt` - file containg a list of id64 identifiers of the fully discovered systems - see VisitedStarCacheMerger description for more details.
+* `systems_Synuefe JM-G b57-1.txt` - file containing a list of partially discovered systems (reported in EDSM).
+* `visited_Synuefe JM-G b57-1.txt` - file containg a list of id64 identifiers of the fully discovered systems - see VisitedStarCacheMerger description for more details.
 
 The system is qualified as partially discovered, if:
 * total bodies count is unknown (`?`),
@@ -27,7 +27,7 @@ The system is qualified as partially discovered, if:
 The system is qualified as fully discovered if total bodies count is greater than 0 and equal total discovered bodies count.
 
 ### Working with partially discovered systems
-The `partial_[system name].txt` file contains lines like:
+The `systems_[system name].txt` file contains lines like:
 ```
 # distances calculated to origin system: Synuefe JM-G b57-1
 Synuefe KM-G b57-3 [8.26ly] (30 bodies / 21 discovered) => https://www.edsm.net/en/system/bodies/id/235051/name/Synuefe+KM-G+b57-3
@@ -47,7 +47,7 @@ The EdsmScanner.exe allows to plot the journey through the partially discovered 
 
 To use the journey plotting, the tool has to be run with three parameters, where the last one has to be `yes`, `y`, `true`, `t` or `1` to activate the feature: `> EdsmScanner.exe "Synuefe JM-G b57-1" 100 TRUE`.
 
-When executed, the `partial_[system name].txt` file will contain the systems in order allowing easier traversal between them and distance parameter referring to the previous system. The header of the file will contain that information:
+When executed, the `systems_[system name].txt` file will contain the systems in order allowing easier traversal between them and distance parameter referring to the previous system. The header of the file will contain that information:
 
 ```
 # distances calculated to previous system, starting from: Synuefe JM-G b57-1
@@ -60,7 +60,7 @@ Synuefe MH-G b57-0 [5.16ly] (8 bodies / 1 discovered) => https://www.edsm.net/en
 
 The VisitedStarCacheMerger.exe allows to update the local player cache of visited systems with list of fully discovered systems from EdsmScanner.exe
 
-Example usage: `> VisitedStarCacheMerger.exe VisitedStarsCache.dat "discovered_Synuefe JM-G b57-1.txt"`
+Example usage: `> VisitedStarCacheMerger.exe VisitedStarsCache.dat "visited_Synuefe JM-G b57-1.txt"`
 
 The `VisitedStarsCache.dat` can be found in `c:\Users\[user_name]\AppData\Local\Frontier Developments\Elite Dangerous\[elite_user_id]\` directory.
 
