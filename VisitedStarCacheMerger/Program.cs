@@ -2,24 +2,25 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace VisitedStarCacheMerger
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             if (args.Length != 2)
             {
-                Console.WriteLine("VisitedStarCacheMerger.exe [path to VisitedStarsCache.dat] [path to system ids txt]");
+                Console.WriteLine("VisitedStarCacheMerger.exe [path to VisitedStarsCache.dat] [path to system ids/names txt]");
                 return;
             }
 
             var cachePath = GetFilePath(args, 0, "[path to VisitedStarsCache.dat]");
-            var idsPath = GetFilePath(args, 1, "[path to system ids txt]");
+            var idsPath = GetFilePath(args, 1, "[path to system ids/names txt]");
 
             var cache = ReadCache(cachePath);
-            var ids = ReadIdsToMerge(idsPath);
+            var ids = await ReadIdsToMerge(idsPath).ToArrayAsync();
 
             Console.WriteLine("Merging...");
             cache.MergeSystemIds(ids);
@@ -38,10 +39,27 @@ namespace VisitedStarCacheMerger
             cache.Write(output);
         }
 
-        private static IEnumerable<long> ReadIdsToMerge(string path)
+        private static async IAsyncEnumerable<long> ReadIdsToMerge(string path)
         {
+            using var client = new EdsmClient();
             Console.WriteLine($"Reading system ids from: {path}");
-            return File.ReadAllLines(path).Select(long.Parse).ToArray();
+            foreach (var line in await File.ReadAllLinesAsync(path))
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                if (long.TryParse(line, out var id))
+                    yield return id;
+                else
+                {
+                    Console.WriteLine($"  Obtaining id for: {line}");
+                    var sysId = await client.GetId64(line.Trim());
+                    if (sysId != null)
+                        yield return sysId.Value;
+                    else
+                        Console.WriteLine("    System Id not found.");
+                }
+            }
         }
 
         private static string GetFilePath(string[] args, int index, string name)
