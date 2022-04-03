@@ -9,7 +9,7 @@ namespace EdsmScanner.Search
 {
     internal class SystemResolver
     {
-        private readonly SemaphoreSlim _throttler = new SemaphoreSlim(20);
+        private readonly SemaphoreSlim _throttler = new SemaphoreSlim(5);
         private readonly EdsmClient _client;
 
         public SystemResolver(EdsmClient client)
