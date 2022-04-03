@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
@@ -16,6 +17,7 @@ namespace VisitedStarCacheMerger
         private readonly HttpClient _client;
         private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         private readonly ServiceProvider _provider;
+        private readonly SemaphoreSlim _sem = new(10);
 
         public EdsmClient()
         {
@@ -34,17 +36,23 @@ namespace VisitedStarCacheMerger
             _provider.Dispose();
         }
 
-        public async Task<long?> GetId64(string systemName)
+        public async Task<long> GetId64(string systemName)
         {
+            await _sem.WaitAsync();
             try
             {
-                var sys = await _client.GetFromJsonAsync<SysDetails>($"api-system-v1/bodies?systemName={Uri.EscapeDataString(systemName)}", JsonSerializerOptions);
-                return sys?.Id64;
-
+                using var result = await _client.GetAsync($"api-v1/system?systemName={Uri.EscapeDataString(systemName)}&showId=1");
+                if (!result.IsSuccessStatusCode)
+                    throw new InvalidOperationException($"EDSM failed with: {(int)result.StatusCode}");
+                var content = await result.Content.ReadAsStringAsync();
+                if (content.StartsWith("["))
+                    throw new InvalidOperationException("System ID not found");
+                return (JsonSerializer.Deserialize<SysDetails>(content, JsonSerializerOptions))?.Id64
+                       ?? throw new InvalidOperationException("System ID not found");
             }
-            catch (Exception ex)
+            finally
             {
-                throw new InvalidOperationException($"Unable to get details for: {systemName}", ex);
+                _sem.Release();
             }
         }
 

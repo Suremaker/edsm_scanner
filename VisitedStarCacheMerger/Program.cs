@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace VisitedStarCacheMerger
@@ -9,6 +10,7 @@ namespace VisitedStarCacheMerger
     class Program
     {
         private static readonly string TempCachePath = $"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}.cache";
+        private static int _totalIdsLoaded = 0;
 
         static async Task Main(string[] args)
         {
@@ -22,7 +24,7 @@ namespace VisitedStarCacheMerger
             var idsPath = GetFilePath(args, 1, "[path to system ids/names txt]");
 
             var cache = ReadCache(cachePath);
-            var ids = await ReadIdsToMerge(idsPath).ToArrayAsync();
+            var ids = await ReadIdsToMerge(idsPath);
 
             Console.WriteLine("Merging...");
             cache.MergeSystemIds(ids);
@@ -41,30 +43,49 @@ namespace VisitedStarCacheMerger
             cache.Write(output);
         }
 
-        private static async IAsyncEnumerable<long> ReadIdsToMerge(string path)
+        private static async Task<long[]> ReadIdsToMerge(string path)
         {
             using var client = new EdsmClient();
             Console.WriteLine($"Reading system ids from: {path}");
-            foreach (var line in await File.ReadAllLinesAsync(path))
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
 
+            var ids = await Task.WhenAll(File.ReadAllLines(path)
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Select(line => ParseId(client, line)));
+            Console.WriteLine();
+            var failed = ids.Where(x => !x.Id64.HasValue).ToArray();
+            if (failed.Any())
+            {
+                Console.WriteLine("Failed systems:");
+                foreach (var sys in failed)
+                    Console.WriteLine($"{sys.Name}: {sys.Exception?.Message}");
+            }
+
+            return ids.Where(i => i.Id64.HasValue).Select(x => x.Id64.GetValueOrDefault()).ToArray();
+        }
+
+        record SysIdLine(string Name, long? Id64 = null, Exception? Exception = null);
+        private static async Task<SysIdLine> ParseId(EdsmClient client, string line)
+        {
+            try
+            {
                 if (long.TryParse(line, out var id))
-                    yield return id;
-                else
+                    return new(line, id);
+                try
                 {
-                    Console.WriteLine($"  Obtaining id for: {line}");
-                    var sysId = await MapNameToId64(client, line);
-                    if (sysId != null)
-                        yield return sysId.Value;
-                    else
-                        Console.WriteLine("    System Id not found.");
+                    return new SysIdLine(line, await MapNameToId64(client, line));
                 }
+                catch (Exception ex)
+                {
+                    return new SysIdLine(line, null, ex);
+                }
+            }
+            finally
+            {
+                Console.Write($"\rSystems read: {Interlocked.Increment(ref _totalIdsLoaded)}");
             }
         }
 
-        private static async Task<long?> MapNameToId64(EdsmClient client, string line)
+        private static async Task<long> MapNameToId64(EdsmClient client, string line)
         {
             if (!Directory.Exists(TempCachePath))
                 Directory.CreateDirectory(TempCachePath);
@@ -74,8 +95,7 @@ namespace VisitedStarCacheMerger
             if (File.Exists(path) && long.TryParse(await File.ReadAllTextAsync(path), out var id64))
                 return id64;
             var result = await client.GetId64(systemName);
-            if (result != null)
-                await File.WriteAllTextAsync(path, result.ToString());
+            await File.WriteAllTextAsync(path, result.ToString());
             return result;
         }
 
