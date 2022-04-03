@@ -8,6 +8,8 @@ namespace VisitedStarCacheMerger
 {
     class Program
     {
+        private static readonly string TempCachePath = $"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}.cache";
+
         static async Task Main(string[] args)
         {
             if (args.Length != 2)
@@ -53,13 +55,28 @@ namespace VisitedStarCacheMerger
                 else
                 {
                     Console.WriteLine($"  Obtaining id for: {line}");
-                    var sysId = await client.GetId64(line.Trim());
+                    var sysId = await MapNameToId64(client, line);
                     if (sysId != null)
                         yield return sysId.Value;
                     else
                         Console.WriteLine("    System Id not found.");
                 }
             }
+        }
+
+        private static async Task<long?> MapNameToId64(EdsmClient client, string line)
+        {
+            if (!Directory.Exists(TempCachePath))
+                Directory.CreateDirectory(TempCachePath);
+
+            var systemName = line.ToLowerInvariant().Trim();
+            var path = $"{TempCachePath}{Path.DirectorySeparatorChar}{string.Join("_", systemName.Split(Path.GetInvalidFileNameChars()))}";
+            if (File.Exists(path) && long.TryParse(await File.ReadAllTextAsync(path), out var id64))
+                return id64;
+            var result = await client.GetId64(systemName);
+            if (result != null)
+                await File.WriteAllTextAsync(path, result.ToString());
+            return result;
         }
 
         private static string GetFilePath(string[] args, int index, string name)
