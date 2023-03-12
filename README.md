@@ -72,11 +72,13 @@ For details on attributes that can be used during filtering, please run: `> Edsm
 
 ## VisitedStarCacheMerger
 
-The VisitedStarCacheMerger.exe allows to update the local player cache of visited systems with list of:
-* fully discovered systems from EdsmScanner.exe (id64 identifiers)
-* system names (like from `importstars.txt`)
+The VisitedStarCacheMerger.exe allows to update the local player cache of visited systems with:
+* list of fully discovered systems from EdsmScanner.exe (id64 identifiers) file with `.txt` extension,
+* list of system names (like from `importstars.txt`) file with `.txt` extension,
+* another cache file with `.dat` extension.
 
-Example usage: `> VisitedStarCacheMerger.exe VisitedStarsCache.dat "visited_Synuefe JM-G b57-1.txt"`
+Example usage: `> VisitedStarCacheMerger.exe VisitedStarsCache.dat "visited_Synuefe JM-G b57-1.txt"`  
+Example usage: `> VisitedStarCacheMerger.exe VisitedStarsCache.dat OtherVisitedStarsCache.dat`
 
 The `VisitedStarsCache.dat` can be found in `c:\Users\[user_name]\AppData\Local\Frontier Developments\Elite Dangerous\[elite_user_id]\` directory.
 
