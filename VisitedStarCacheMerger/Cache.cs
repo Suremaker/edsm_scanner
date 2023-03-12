@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -16,6 +17,8 @@ namespace VisitedStarCacheMerger
             _records = records.ToDictionary(r => r.Id);
             _footer = footer;
         }
+
+        public int Count => _records.Count;
 
         public static Cache Read(BinaryReader input)
         {
@@ -35,6 +38,19 @@ namespace VisitedStarCacheMerger
                     r.VisitedDate = maxDate;
                 else
                     _records[systemId] = new Record { Id = systemId, VisitedDate = maxDate, Visits = 1 };
+            }
+
+            _header.UpdateRows(_records.Count);
+        }
+
+        public void MergeCaches(Cache cache)
+        {
+            foreach (var record in cache._records.Values)
+            {
+                if (_records.TryGetValue(record.Id, out var r))
+                    r.VisitedDate = Math.Max(r.VisitedDate, record.VisitedDate);
+                else
+                    _records[record.Id] = record;
             }
 
             _header.UpdateRows(_records.Count);

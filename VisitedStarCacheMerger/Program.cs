@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -16,18 +15,26 @@ namespace VisitedStarCacheMerger
         {
             if (args.Length != 2)
             {
-                Console.WriteLine("VisitedStarCacheMerger.exe [path to VisitedStarsCache.dat] [path to system ids/names txt]");
+                Console.WriteLine("VisitedStarCacheMerger.exe [path to VisitedStarsCache.dat] [path to system ids/names txt or another Cache.dat]");
                 return;
             }
 
             var cachePath = GetFilePath(args, 0, "[path to VisitedStarsCache.dat]");
-            var idsPath = GetFilePath(args, 1, "[path to system ids/names txt]");
+            var idsPath = GetFilePath(args, 1, "[path to system ids/names txt or another Cache.dat]");
 
             var cache = ReadCache(cachePath);
-            var ids = await ReadIdsToMerge(idsPath);
-
-            Console.WriteLine("Merging...");
-            cache.MergeSystemIds(ids);
+            if (Path.GetExtension(idsPath).Equals(".dat"))
+            {
+                var cache2 = ReadCache(idsPath);
+                Console.WriteLine("Merging cache files...");
+                cache.MergeCaches(cache2);
+            }
+            else
+            {
+                var ids = await ReadIdsToMerge(idsPath);
+                Console.WriteLine("Merging system IDs with Cache...");
+                cache.MergeSystemIds(ids);
+            }
 
             Save(cache, cachePath);
         }
@@ -41,6 +48,7 @@ namespace VisitedStarCacheMerger
             Console.WriteLine($"Writing cache: {cachePath}");
             using var output = new BinaryWriter(File.OpenWrite(cachePath));
             cache.Write(output);
+            Console.WriteLine($"Written systems: {cache.Count}");
         }
 
         private static async Task<long[]> ReadIdsToMerge(string path)
@@ -110,7 +118,9 @@ namespace VisitedStarCacheMerger
         {
             Console.WriteLine($"Reading cache from: {path}");
             using var input = new BinaryReader(File.OpenRead(path));
-            return Cache.Read(input);
+            var cache = Cache.Read(input);
+            Console.WriteLine($"Systems read: {cache.Count}");
+            return cache;
         }
     }
 }
