@@ -70,6 +70,11 @@ For example usages, please run: `> EdsmScanner.exe help usages`.
 
 For details on attributes that can be used during filtering, please run: `> EdsmScanner.exe help filters`.
 
+## Caveats
+
+Please note that EdsmScanner uses https://www.edsm.net/api-system-v1/bodies endpoint to query system details of each found system. This endpoint is throttled, allowing to retrieve roughly 700 system information per minute.  
+When the limit is reached, the EdsmScanner will pause and wait until it would be able to resume queries. It may be perceived as EdsmScanner is stalling, but unfortunately, it is a limitation that cannot be overcome by EdsmScanner.
+
 ## VisitedStarCacheMerger
 
 The VisitedStarCacheMerger.exe allows to update the local player cache of visited systems with:
