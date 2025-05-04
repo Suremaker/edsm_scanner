@@ -48,7 +48,8 @@ namespace EdsmScanner.Models
         public string[] RingTypes => Rings.Select(r => r.Type).Distinct().ToArray();
         [Queryable]
         public string[] BeltTypes => Belts.Select(r => r.Type).Distinct().ToArray();
-
+        [Queryable]
+        public bool IsAtmosphericLandable => IsLandable == true && SurfacePressure is > 0 and < 0.1m && (AtmosphereType?.StartsWith("thin", StringComparison.OrdinalIgnoreCase) ?? false);
         public RingInfo[] Rings { get; set; } = Array.Empty<RingInfo>();
         public RingInfo[] Belts { get; set; } = Array.Empty<RingInfo>();
     }

@@ -14,6 +14,8 @@ namespace EdsmScanner.Models
         public int DiscoveredBodies => Bodies?.Length ?? 0;
         [Queryable]
         public bool IsFullyDiscovered => BodyCount.GetValueOrDefault() > 0 && BodyCount <= DiscoveredBodies;
+        [Queryable] 
+        public bool HasAtmosphericLandable => Bodies?.Any(b => b.IsAtmosphericLandable) ?? false;
 
         /// <summary>
         /// Expected count
