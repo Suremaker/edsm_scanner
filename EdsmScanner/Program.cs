@@ -20,23 +20,39 @@ namespace EdsmScanner
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
 
+            var scanRadiusOption = new Option<int>(new[] { "--scan-radius", "-r" }, () => 50, "Scan radius in ly (default: 50)");
+            var plotJourneyOption = new Option<bool>(new[] { "--plot-journey", "-p" }, () => false, "Plot journey (default: false)");
+            var includeBodiesOption = new Option<bool>(new[] { "--include-bodies", "-b" }, () => false, "Include bodies in systems.txt (default: false)");
+            var cacheDurationOption = new Option<TimeSpan>(new[] { "--cache-duration" }, () => TimeSpan.FromMinutes(30), "Duration on how long system details are cached (default: 00:30:00)");
+            var filterBodyOption = new Option<string[]>(new[] { "--filter-body", "-fb" }, Array.Empty<string>, $"Body filter(s) written in form on LINQ expression like: \"{nameof(SystemBody.IsScoopable)}==true\". When applied, only the systems with at least one matching body will be returned.");
+            var filterSystemOption = new Option<string[]>(new[] { "--filter-system", "-fs" }, Array.Empty<string>, $"System filter(s) written in form on LINQ expression like: \"{nameof(SystemDetails.DiscoveredStars)} > 1\".");
+            var filterColonizableOption = new Option<bool>(new[] { "--filter-colonizable", "-fc" }, () => false, "Returns only colonizable systems");
             var cmd = new RootCommand
             {
-                new Option<int>(new []{"--scan-radius","-r"},50,"Scan radius in ly (default: 50)"),
-                new Option<bool>(new []{"--plot-journey","-p"},false,"Plot journey (default: false)"),
-                new Option<bool>(new []{"--include-bodies","-b"},false,"Include bodies in systems.txt (default: false)"),
-                new Option<TimeSpan>(new []{"--cache-duration"},TimeSpan.FromMinutes(30),"Duration on how long system details are cached (default: 00:30:00)"),
-                new Option<string[]>(new []{"--filter-body","-fb"},Array.Empty<string>,$"Body filter(s) written in form on LINQ expression like: \"{nameof(SystemBody.IsScoopable)}==true\". When applied, only the systems with at least one matching body will be returned."),
-                new Option<string[]>(new []{"--filter-system","-fs"},Array.Empty<string>,$"System filter(s) written in form on LINQ expression like: \"{nameof(SystemDetails.DiscoveredStars)} > 1\".")
+                scanRadiusOption,
+                plotJourneyOption,
+                includeBodiesOption,
+                cacheDurationOption,
+                filterBodyOption,
+                filterSystemOption,
+                filterColonizableOption
             };
             cmd.Description = "Edsm Scanner";
-            cmd.AddArgument(new Argument<string>("origin-system") { Description = "Origin system name" });
-            cmd.Handler = CommandHandler.Create<string, int, bool, bool, TimeSpan, string[], string[]>(Scan);
+            var originSystemArgument = new Argument<string>("origin-system") { Description = "Origin system name" };
+            cmd.AddArgument(originSystemArgument);
+            cmd.SetHandler(Scan,
+                originSystemArgument, scanRadiusOption, plotJourneyOption, includeBodiesOption, cacheDurationOption,
+                filterSystemOption, filterBodyOption, filterColonizableOption);
 
 
             var helpCmd = new Command("help", "Displays help");
-            helpCmd.AddCommand(new Command("usage", "Displays usage") { Handler = CommandHandler.Create(HelpUsage) });
-            helpCmd.AddCommand(new Command("filters", "Displays filters usage") { Handler = CommandHandler.Create(FiltersUsage) });
+            var usageCmd = new Command("usage", "Displays usage");
+            usageCmd.SetHandler(HelpUsage);
+            var filtersUsageCmd = new Command("filters", "Displays filters usage");
+            filtersUsageCmd.SetHandler(FiltersUsage);
+
+            helpCmd.AddCommand(usageCmd);
+            helpCmd.AddCommand(filtersUsageCmd);
 
             cmd.AddCommand(helpCmd);
             return await cmd.InvokeAsync(args);
@@ -89,10 +105,10 @@ namespace EdsmScanner
             Console.WriteLine();
         }
 
-        static async Task Scan(string originSystem, int scanRadius, bool plotJourney, bool includeBodies, TimeSpan cacheDuration, string[] filterSystem, string[] filterBody)
+        static async Task Scan(string originSystem, int scanRadius, bool plotJourney, bool includeBodies, TimeSpan cacheDuration, string[] filterSystem, string[] filterBody, bool filterColonizable)
         {
             using var client = new EdsmClient(new SystemCache(cacheDuration));
-            var foundSystems = await new SystemResolver(client).ResolveSystemsAround(originSystem, scanRadius);
+            var foundSystems = await new SystemResolver(client).ResolveSystemsAround(originSystem, scanRadius, filterColonizable);
 
             var filteredSystems = new SystemFilter(filterSystem, filterBody).Filter(foundSystems);
 

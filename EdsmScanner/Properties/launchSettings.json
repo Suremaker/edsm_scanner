@@ -2,7 +2,7 @@
   "profiles": {
     "EdsmScanner": {
       "commandName": "Project",
-      "commandLineArgs": "\"V970 Scorpii\" -r 30 -p -b"
+      "commandLineArgs": "\"Hip 1893\" -r 90 -fc -b -fb \"RingTypes.Any()\""
     }
   }
 }

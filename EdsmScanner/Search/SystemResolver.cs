@@ -17,9 +17,11 @@ namespace EdsmScanner.Search
             _client = client;
         }
 
-        public async Task<SystemDetails[]> ResolveSystemsAround(string originSystem, int radius)
+        public async Task<SystemDetails[]> ResolveSystemsAround(string originSystem, int radius, bool filterColonizable)
         {
             var systems = await SearchForSystems(originSystem, radius);
+            if (filterColonizable)
+                systems = systems.Where(s => string.IsNullOrEmpty(s.Information.Allegiance)).ToArray();
             return await GetSystemsDetails(systems);
         }
 

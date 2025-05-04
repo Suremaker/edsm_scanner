@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using EdsmScanner.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +18,7 @@ namespace EdsmScanner.Clients
         private readonly SystemCache _cache;
         private readonly ServiceProvider _provider;
         private readonly HttpClient _client;
-        private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web){TypeInfoResolver = SourceGenerationContext.Default};
 
         public EdsmClient(SystemCache cache)
         {
@@ -65,7 +66,7 @@ namespace EdsmScanner.Clients
         {
             try
             {
-                return (await _client.GetFromJsonAsync<SystemRef[]>($"api-v1/sphere-systems?systemName={Uri.EscapeDataString(originSystem)}&radius={radius}&showCoordinates=1"))!;
+                return (await _client.GetFromJsonAsync<SystemRef[]>($"api-v1/sphere-systems?systemName={Uri.EscapeDataString(originSystem)}&radius={radius}&showCoordinates=1&showInformation=1"))!;
             }
             catch (Exception ex)
             {
