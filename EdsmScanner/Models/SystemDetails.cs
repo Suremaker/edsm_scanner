@@ -16,6 +16,18 @@ namespace EdsmScanner.Models
         public bool IsFullyDiscovered => BodyCount.GetValueOrDefault() > 0 && BodyCount <= DiscoveredBodies;
         [Queryable] 
         public bool HasAtmosphericLandable => Bodies?.Any(b => b.IsAtmosphericLandable) ?? false;
+        [Queryable]
+        public bool HasLandable => Bodies?.Any(b => b.IsLandable==true) ?? false;
+        [Queryable] 
+        public bool HasRings => Bodies?.Any(b => b.RingTypes.Any()) ?? false;
+        [Queryable]
+        public bool HasMetalBody => HasBody("High metal content world")|| HasBody("Metal-rich body");
+        [Queryable]
+        public bool HasRockyBody => HasBody("Rocky body");
+        [Queryable]
+        public bool HasIcyBody => HasBody("Icy body");
+
+        public bool HasBody(string? subType) => Bodies?.Any(b => string.Equals(b.SubType, subType,StringComparison.OrdinalIgnoreCase)) ?? false;
 
         /// <summary>
         /// Expected count

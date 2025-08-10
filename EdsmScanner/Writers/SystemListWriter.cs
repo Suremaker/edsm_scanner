@@ -39,11 +39,15 @@ namespace EdsmScanner.Writers
         private static async Task WriteBody(StreamWriter writer, SystemBody body)
         {
             if (body.Type.Equals("star", StringComparison.OrdinalIgnoreCase))
-                await writer.WriteLineAsync($"  {body.Name}: {body.Type}/{body.SubType} distance:{body.DistanceToArrival}ls {(body.IsScoopable.GetValueOrDefault() ? "scoopable" : "non-scoopable")} age:{body.Age} luminosity:{body.Luminosity} spectralClass:{body.SpectralClass} mass:{body.SolarMasses} radius:{body.SolarRadius} temperature:{body.SurfaceTemperature}K reserve:{body.ReserveLevel} belts:{string.Join(",", body.Belts.Select(b => b.Type))} rings:{string.Join(",", body.Rings.Select(b => b.Type))}");
+                await writer.WriteLineAsync($"  {body.Name}: {body.Type}/{body.SubType} distance:{body.DistanceToArrival}ls{(body.IsScoopable.GetValueOrDefault() ? " scoopable" : "")} age:{body.Age} luminosity:{body.Luminosity} spectralClass:{body.SpectralClass} mass:{body.SolarMasses} radius:{body.SolarRadius} temperature:{body.SurfaceTemperature}K reserve:{body.ReserveLevel}");
             else if (body.Type.Equals("planet", StringComparison.OrdinalIgnoreCase))
-                await writer.WriteLineAsync($"  {body.Name}: {body.Type}/{body.SubType} distance:{body.DistanceToArrival}ls {(body.IsLandable.GetValueOrDefault() ? "landable" : "not-landable")} gravity:{body.Gravity}G earthMasses:{body.EarthMasses} temperature:{body.SurfaceTemperature}K pressure:{body.SurfacePressure} atmosphere:{body.AtmosphereType} volcanism:{body.VolcanismType} terraforming:{body.TerraformingState} reserve:{body.ReserveLevel} rings:{string.Join(",", body.Rings.Select(b => b.Type))}");
+                await writer.WriteLineAsync($"  {body.Name}: {body.Type}/{body.SubType} distance:{body.DistanceToArrival}ls{(body.IsLandable.GetValueOrDefault() ? " landable" : "")} gravity:{body.Gravity}G earthMasses:{body.EarthMasses} temperature:{body.SurfaceTemperature}K pressure:{body.SurfacePressure} atmosphere:{body.AtmosphereType} volcanism:{body.VolcanismType} terraforming:{body.TerraformingState} reserve:{body.ReserveLevel}");
             else
                 await writer.WriteLineAsync($"  {body.Name}: {body.Type}/{body.SubType} distance:{body.DistanceToArrival}ls");
+            if (body.Belts.Any())
+                await writer.WriteLineAsync($"    belts:{string.Join(",", body.Belts.Select(b => b.Type))}");
+            if (body.Rings.Any())
+                await writer.WriteLineAsync($"    rings:{string.Join(",", body.Rings.Select(b => b.Type))}");
         }
     }
 }
